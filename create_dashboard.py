@@ -29,13 +29,13 @@ rev_by_category = df.groupby('product_category')['Revenue'].sum().reset_index().
 rev_by_store = df.groupby('store_location')['Revenue'].sum().reset_index()
 
 # Create Excel writer
-output_file = 'Coffee_Shop_Dashboard.xlsx'
+output_file = 'Coffee_Shop_Dashboard_VN.xlsx'
 writer = pd.ExcelWriter(output_file, engine='xlsxwriter')
 workbook = writer.book
 
 print("Creating Dashboard...")
 # Add Dashboard Sheet
-dash_sheet = workbook.add_worksheet('Dashboard')
+dash_sheet = workbook.add_worksheet('Bảng Điều Khiển')
 
 # Formats
 title_format = workbook.add_format({'bold': True, 'font_size': 20, 'font_color': '#ffffff', 'bg_color': '#4A2311', 'align': 'center', 'valign': 'vcenter'})
@@ -48,16 +48,16 @@ dash_sheet.set_column('B:D', 20)
 dash_sheet.set_column('E:H', 15)
 
 # Title
-dash_sheet.merge_range('B2:H3', '☕ COFFEE SHOP SALES DASHBOARD', title_format)
+dash_sheet.merge_range('B2:H3', '☕ BẢNG ĐIỀU KHIỂN DOANH THU QUÁN CÀ PHÊ', title_format)
 
 # KPIs
-dash_sheet.write('B5', 'Total Revenue', kpi_title_format)
+dash_sheet.write('B5', 'Tổng Doanh Thu', kpi_title_format)
 dash_sheet.write('B6', total_revenue, kpi_val_format)
 
-dash_sheet.write('D5', 'Total Orders', kpi_title_format)
+dash_sheet.write('D5', 'Tổng Đơn Hàng', kpi_title_format)
 dash_sheet.write('D6', total_orders, kpi_val_format)
 
-dash_sheet.write('F5', 'Avg Order Value', kpi_title_format)
+dash_sheet.write('F5', 'Trung Bình / Đơn', kpi_title_format)
 dash_sheet.write('F6', avg_order_val, kpi_val_format)
 
 # Write summary data to a hidden sheet to power the charts
@@ -88,9 +88,9 @@ line_chart.add_series({
     'values':     ['SummaryData', 1, 1, len(rev_by_date), 1],
     'line':       {'color': '#D2691E'}
 })
-line_chart.set_title({'name': 'Revenue Trend Over Time'})
-line_chart.set_x_axis({'name': 'Date'})
-line_chart.set_y_axis({'name': 'Revenue ($)'})
+line_chart.set_title({'name': 'Xu Hướng Doanh Thu Theo Thời Gian'})
+line_chart.set_x_axis({'name': 'Ngày'})
+line_chart.set_y_axis({'name': 'Doanh Thu ($)'})
 line_chart.set_legend({'none': True})
 dash_sheet.insert_chart('B9', line_chart, {'x_scale': 1.8, 'y_scale': 1.2})
 
@@ -102,7 +102,7 @@ bar_chart.add_series({
     'values':     ['SummaryData', 1, 4, len(rev_by_category), 4],
     'fill':       {'color': '#8B4513'}
 })
-bar_chart.set_title({'name': 'Revenue by Category'})
+bar_chart.set_title({'name': 'Doanh Thu Theo Danh Mục'})
 bar_chart.set_legend({'none': True})
 dash_sheet.insert_chart('B28', bar_chart, {'x_scale': 1.2, 'y_scale': 1.1})
 
@@ -113,16 +113,16 @@ pie_chart.add_series({
     'categories': ['SummaryData', 1, 6, len(rev_by_store), 6],
     'values':     ['SummaryData', 1, 7, len(rev_by_store), 7],
 })
-pie_chart.set_title({'name': 'Revenue Distribution by Store'})
+pie_chart.set_title({'name': 'Tỷ Trọng Doanh Thu Theo Cửa Hàng'})
 dash_sheet.insert_chart('F28', pie_chart, {'x_scale': 1.0, 'y_scale': 1.1})
 
 
 # Write Raw Data for Filtering
 print("Writing Raw Data...")
-df.to_excel(writer, sheet_name='Raw Data', index=False)
+df.to_excel(writer, sheet_name='Dữ Liệu Gốc', index=False)
 
 # Add Filter to Raw Data
-worksheet = writer.sheets['Raw Data']
+worksheet = writer.sheets['Dữ Liệu Gốc']
 worksheet.autofilter(0, 0, len(df), len(df.columns) - 1)
 
 # Format Headers in Raw Data
